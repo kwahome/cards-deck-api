@@ -82,17 +82,19 @@ cards-deck-api-app-1  | time="2023-04-13T22:09:06Z" level=info msg="HTTP server 
 
 - Health Check:
 
-
+    ```
     curl --location --request GET 'localhost:8080/health'
-
+  
     {
         "status": "alive",
         "timestamp": "Thursday, 13-Apr-23 23:22:58 EAT"
     }
+    ```
+        
 
 - Create Deck:
 
-
+    ```
     curl --location --request POST 'localhost:8080/api/v1/decks?shuffle=true&cards=AC%2CKH%2C2S' --header 'AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c'
 
     {
@@ -100,10 +102,11 @@ cards-deck-api-app-1  | time="2023-04-13T22:09:06Z" level=info msg="HTTP server 
         "shuffled": true,
         "remaining": 3
     }
+    ```
 
 - Open Deck:
-
-
+    
+    ```
     curl --location 'localhost:8080/api/v1/decks/60e87195-25b2-44eb-9d67-3004ad664e5c' --header 'AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c'
 
     {
@@ -128,10 +131,11 @@ cards-deck-api-app-1  | time="2023-04-13T22:09:06Z" level=info msg="HTTP server 
             }
         ]
     }
+    ```
 
 - Draw Cards:
 
-
+    ```
     curl --location 'localhost:8080/api/v1/decks/60e87195-25b2-44eb-9d67-3004ad664e5c/draw?count=3' --header 'AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c'
 
     [
@@ -151,7 +155,7 @@ cards-deck-api-app-1  | time="2023-04-13T22:09:06Z" level=info msg="HTTP server 
             "code": "2S"
         }
     ]
-
+    ```
 
 ## Code Structure
 The backend service is implemented using clean architecture principles. 
