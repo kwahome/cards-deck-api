@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: on-failure
+    command: ["/bin/sh", "-c", "./bin/run_app.sh"]
+    volumes:
+      - app_gomod_data:/go/pkg/mod
+      - .:/src
+    environment:
+      - APP_PORT=8000
+      - READ_TIMEOUT=30
+      - WRITE_TIMEOUT=30
+    network_mode: host
+
+volumes:
+  app_gomod_data:

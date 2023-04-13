@@ -11,7 +11,7 @@ import (
 	"github.com/kwahome/cards-deck-api/internal/api/v1/dtos"
 	"github.com/kwahome/cards-deck-api/internal/api/v1/handlers"
 	"github.com/kwahome/cards-deck-api/internal/domain/service"
-	"github.com/kwahome/cards-deck-api/test/unit"
+	"github.com/kwahome/cards-deck-api/tests/unit"
 	"github.com/stretchr/testify/assert"
 )
 
