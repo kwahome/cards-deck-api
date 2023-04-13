@@ -1,0 +1,5 @@
+HTTP:
+  host: localhost
+  port: 8080
+  debug: true
+AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c
