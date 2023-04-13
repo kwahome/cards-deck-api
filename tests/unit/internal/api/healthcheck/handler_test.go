@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kwahome/cards-deck-api/internal/api/healthcheck"
-	"github.com/kwahome/cards-deck-api/test/unit"
+	"github.com/kwahome/cards-deck-api/tests/unit"
 	"github.com/stretchr/testify/assert"
 )
 

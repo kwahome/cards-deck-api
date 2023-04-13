@@ -10,8 +10,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/kwahome/cards-deck-api/internal/api/v1/handlers"
 	"github.com/kwahome/cards-deck-api/internal/domain/model"
-	"github.com/kwahome/cards-deck-api/test/integration"
-	"github.com/kwahome/cards-deck-api/test/mocks"
+	"github.com/kwahome/cards-deck-api/tests/integration"
+	"github.com/kwahome/cards-deck-api/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
 

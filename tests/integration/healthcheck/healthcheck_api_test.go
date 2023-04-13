@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/kwahome/cards-deck-api/internal/api/healthcheck"
-	"github.com/kwahome/cards-deck-api/test/integration"
+	"github.com/kwahome/cards-deck-api/tests/integration"
 	"github.com/stretchr/testify/assert"
 )
 

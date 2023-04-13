@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 	"time"
@@ -36,7 +37,7 @@ func initConfig() {
 		logrus.Fatal("An error has occurred while parsing config file: ", err)
 	}
 
-	logrus.Info("using the config file: %s", v.ConfigFileUsed())
+	logrus.Info(fmt.Sprintf("using the config file: %s", v.ConfigFileUsed()))
 }
 
 // RunHttpServer starts the http server.
@@ -72,6 +73,8 @@ func RunHttpServer(config config.Config) error {
 		WriteTimeout:   2 * time.Minute,
 		MaxHeaderBytes: 1 << 20,
 	}
+
+	logrus.Info(fmt.Sprintf("HTTP server is listening on port: %s", conf.HTTP.Port))
 
 	return server.ListenAndServe()
 }
