@@ -52,7 +52,7 @@ func (handler *CreateDeckHandler) CreateDeck(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, helpers.GenerateDeckResponse(deck))
+	context.JSON(http.StatusCreated, helpers.GenerateDeckResponse(deck))
 
 	logger.Info("create new deck request completed successfully")
 }
