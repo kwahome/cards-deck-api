@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/iamolegga/enviper"
 	"github.com/kwahome/cards-deck-api/config"
 	"github.com/kwahome/cards-deck-api/internal/api/healthcheck"
 	"github.com/kwahome/cards-deck-api/internal/api/v1"
@@ -28,22 +27,31 @@ func main() {
 }
 
 func initConfig() {
-	v := enviper.New(viper.New())
+	// Set the path to look for the configurations file
+	viper.AddConfigPath(".")
 
-	v.AddConfigPath(".")
-	v.SetConfigName(".app")
+	// Set the file name of the configurations file
+	viper.SetConfigName("app")
 
-	if err := v.Unmarshal(&conf); err != nil {
+	viper.SetConfigType("env")
+
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
+		logrus.Fatal("An error has occurred while reading config file: ", err)
+	}
+
+	if err := viper.Unmarshal(&conf); err != nil {
 		logrus.Fatal("An error has occurred while parsing config file: ", err)
 	}
 
-	logrus.Info(fmt.Sprintf("using the config file: %s", v.ConfigFileUsed()))
+	logrus.Info(fmt.Sprintf("using the config file: %s", viper.ConfigFileUsed()))
 }
 
 // RunHttpServer starts the http server.
 func RunHttpServer(config config.Config) error {
 	gin.SetMode(gin.ReleaseMode)
-	if config.HTTP.Debug {
+	if config.Debug {
 		gin.SetMode(gin.DebugMode)
 	}
 
@@ -65,7 +73,7 @@ func RunHttpServer(config config.Config) error {
 	/* ---------------------------  Private routes  --------------------------- */
 	v1.RegisterRoutes(router)
 
-	address := net.JoinHostPort(config.HTTP.Host, config.HTTP.Port)
+	address := net.JoinHostPort(config.Host, config.Port)
 	server := http.Server{
 		Addr:           address,
 		Handler:        router,
@@ -74,7 +82,7 @@ func RunHttpServer(config config.Config) error {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	logrus.Info(fmt.Sprintf("HTTP server is listening on port: %s", conf.HTTP.Port))
+	logrus.Info(fmt.Sprintf("HTTP server is listening on port: %s", conf.Port))
 
 	return server.ListenAndServe()
 }

@@ -22,13 +22,41 @@ To run all tests, use:
 
 > go test ./tests/...
 
+```text
+
+cards-deck-api % go test ./tests/... 
+?       github.com/kwahome/cards-deck-api/tests/integration     [no test files]
+ok      github.com/kwahome/cards-deck-api/tests/integration/healthcheck (cached)
+?       github.com/kwahome/cards-deck-api/tests/mocks   [no test files]
+?       github.com/kwahome/cards-deck-api/tests/unit    [no test files]
+ok      github.com/kwahome/cards-deck-api/tests/integration/v1  (cached)
+ok      github.com/kwahome/cards-deck-api/tests/unit/internal/api/healthcheck   (cached)
+ok      github.com/kwahome/cards-deck-api/tests/unit/internal/api/v1/handlers   (cached)
+```
+
 To run all integration tests, use:
 
 > go test ./tests/integration/...
 
+```text
+cards-deck-api % go test ./tests/integration/...
+?       github.com/kwahome/cards-deck-api/tests/integration     [no test files]
+ok      github.com/kwahome/cards-deck-api/tests/integration/healthcheck (cached)
+ok      github.com/kwahome/cards-deck-api/tests/integration/v1  (cached)
+
+```
+
 To run all unit tests, use:
 
 > go test ./tests/unit/...
+
+```text
+cards-deck-api % go test ./tests/unit/...
+?       github.com/kwahome/cards-deck-api/tests/unit    [no test files]
+ok      github.com/kwahome/cards-deck-api/tests/unit/internal/api/healthcheck   (cached)
+ok      github.com/kwahome/cards-deck-api/tests/unit/internal/api/v1/handlers   (cached)
+
+```
 
 ### 3. Start web server:
 
@@ -36,7 +64,7 @@ Use:
 
 > go run cmd/main.go
 
-to start a web server running on port `8080` or the port configured in `.app.yml`:
+to start a web server running on port `8080` or the port configured via the env variable `APP_PORT`:
 
 ```text
 cards-deck-api % go run cmd/main.go
@@ -208,7 +236,7 @@ Below are the enclosed packages:
 This directory contains code which is OK for other services to consume, this may include API clients, 
 or utility functions which may be handy for other projects but don’t justify their own project.
 
-### 8. /tests
+### 6. /tests
 
 This directory contains the test files for the code in the project. This way of organizing tests was chosen over
 having test files live side by side with the files they are testing because it provides an easy way to group 

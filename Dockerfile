@@ -9,6 +9,7 @@ LABEL maintainer="Wahome <kevowahome@gmail.com>"
 ENV GO111MODULE=on
 ENV GOOS="linux"
 ENV CGO_ENABLED=0
+ENV GOARCH=amd64
 
 # Install git. (alpine image does not have git in it)
 RUN apk update && \
@@ -43,10 +44,8 @@ COPY . ./
 # It is also a common best practise.
 
 # Build the application.
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o /bin/main
+RUN go build -v -o /bin/main
 
 RUN mkdir -p /var/log/app
 
 EXPOSE 8080
-
-ENV APP_DIR="/app"
