@@ -10,8 +10,8 @@ services:
     volumes:
       - app_gomod_data:/go/pkg/mod
       - .:/src
-    env_file:
-      - app.env
+    environment:
+      - APP_HOST=0.0.0.0
 
 volumes:
   app_gomod_data:

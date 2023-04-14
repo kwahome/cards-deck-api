@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/kwahome/cards-deck-api/internal/domain/errors"
-	"github.com/kwahome/cards-deck-api/internal/domain/service"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -14,141 +12,146 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/kwahome/cards-deck-api/internal/api/v1/dtos"
 	"github.com/kwahome/cards-deck-api/internal/api/v1/handlers"
+	"github.com/kwahome/cards-deck-api/internal/domain/errors"
 	"github.com/kwahome/cards-deck-api/internal/domain/model"
+	"github.com/kwahome/cards-deck-api/internal/domain/service"
 	httpHelpers "github.com/kwahome/cards-deck-api/pkg/http"
 	"github.com/kwahome/cards-deck-api/tests/mocks"
 	"github.com/kwahome/cards-deck-api/tests/unit"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDrawCards_Succeeds(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	mockDeckService := mocks.NewMockDeckService(ctrl)
+func TestDrawCardsFromDeck(t *testing.T) {
 
-	recorder := httptest.NewRecorder()
+	t.Run("valid request should succeed", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		mockDeckService := mocks.NewMockDeckService(ctrl)
 
-	context := testhelpers.GetTestGinContext(recorder)
+		recorder := httptest.NewRecorder()
 
-	deckId := "acee26ae-c304-4747-ab47-0109c6130a10"
-	params := []gin.Param{
-		{
-			Key:   "id",
-			Value: deckId,
-		},
-	}
+		context := testhelpers.GetTestGinContext(recorder)
 
-	cardCount := 5
-	queryParams := url.Values{}
-	queryParams.Add("count", strconv.Itoa(cardCount))
-	testhelpers.MockJsonGet(context, params, queryParams)
+		deckId := "acee26ae-c304-4747-ab47-0109c6130a10"
+		params := []gin.Param{
+			{
+				Key:   "id",
+				Value: deckId,
+			},
+		}
 
-	// stub
-	mockDeckService.
-		EXPECT().
-		DrawCards(deckId, cardCount).
-		DoAndReturn(func(string, int) (model.Cards, error) {
-			return model.FullDeck[0:cardCount], nil
-		}).
-		AnyTimes()
+		cardCount := 5
+		queryParams := url.Values{}
+		queryParams.Add("count", strconv.Itoa(cardCount))
+		testhelpers.MockJsonGet(context, params, queryParams)
 
-	handler := handlers.NewDrawCardsHandler(mockDeckService)
+		// stub
+		mockDeckService.
+			EXPECT().
+			DrawCards(deckId, cardCount).
+			DoAndReturn(func(string, int) (model.Cards, error) {
+				return model.FullDeck[0:cardCount], nil
+			}).
+			AnyTimes()
 
-	handler.DrawCards(context)
+		handler := handlers.NewDrawCardsHandler(mockDeckService)
 
-	assert.Equal(t, http.StatusOK, recorder.Code)
+		handler.DrawCards(context)
 
-	var response []dtos.CardResponse
-	err := json.Unmarshal([]byte(recorder.Body.String()), &response)
-	if err != nil {
-		t.Error(err)
-	}
+		assert.Equal(t, http.StatusOK, recorder.Code)
 
-	assert.Equal(t, cardCount, len(response))
-}
+		var response []dtos.CardResponse
+		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
+		if err != nil {
+			t.Error(err)
+		}
 
-func TestDrawCards_MissingDeckIdParam(t *testing.T) {
-	recorder := httptest.NewRecorder()
+		assert.Equal(t, cardCount, len(response))
+	})
 
-	context := testhelpers.GetTestGinContext(recorder)
+	t.Run("missing or invalid deck id in request should return an error response", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
 
-	testhelpers.MockJsonGet(context, []gin.Param{}, url.Values{})
+		context := testhelpers.GetTestGinContext(recorder)
 
-	handler := handlers.NewDrawCardsHandler(service.CreateDeckService())
+		testhelpers.MockJsonGet(context, []gin.Param{}, url.Values{})
 
-	handler.DrawCards(context)
+		handler := handlers.NewDrawCardsHandler(service.CreateDeckService())
 
-	assert.Equal(t, http.StatusBadRequest, recorder.Code)
+		handler.DrawCards(context)
 
-	var response httpHelpers.ErrorResponse
-	err := json.Unmarshal([]byte(recorder.Body.String()), &response)
-	if err != nil {
-		t.Error(err)
-	}
+		assert.Equal(t, http.StatusBadRequest, recorder.Code)
 
-	assert.Equal(t, errors.InvalidDeckIdErrorCode, response.Code)
-	assert.Equal(t, "the deck id is invalid", response.Message)
-}
+		var response httpHelpers.ErrorResponse
+		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
+		if err != nil {
+			t.Error(err)
+		}
 
-func TestDrawCards_MissingCountParam(t *testing.T) {
-	recorder := httptest.NewRecorder()
+		assert.Equal(t, errors.InvalidDeckIdErrorCode, response.Code)
+		assert.Equal(t, "the deck id is invalid", response.Message)
+	})
 
-	context := testhelpers.GetTestGinContext(recorder)
+	t.Run("missing or invalid count in request should return an error response", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
 
-	deckId := "acee26ae-c304-4747-ab47-0109c6130a10"
-	params := []gin.Param{
-		{
-			Key:   "id",
-			Value: deckId,
-		},
-	}
-	testhelpers.MockJsonGet(context, params, url.Values{})
+		context := testhelpers.GetTestGinContext(recorder)
 
-	handler := handlers.NewDrawCardsHandler(service.CreateDeckService())
+		deckId := "acee26ae-c304-4747-ab47-0109c6130a10"
+		params := []gin.Param{
+			{
+				Key:   "id",
+				Value: deckId,
+			},
+		}
+		testhelpers.MockJsonGet(context, params, url.Values{})
 
-	handler.DrawCards(context)
+		handler := handlers.NewDrawCardsHandler(service.CreateDeckService())
 
-	assert.Equal(t, http.StatusBadRequest, recorder.Code)
+		handler.DrawCards(context)
 
-	var response httpHelpers.ErrorResponse
-	err := json.Unmarshal([]byte(recorder.Body.String()), &response)
-	if err != nil {
-		t.Error(err)
-	}
+		assert.Equal(t, http.StatusBadRequest, recorder.Code)
 
-	assert.Equal(t, errors.InvalidCardsCountErrorCode, response.Code)
-	assert.Equal(t, "the cards count is invalid", response.Message)
-}
+		var response httpHelpers.ErrorResponse
+		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
+		if err != nil {
+			t.Error(err)
+		}
 
-func TestDrawCards_DeckNotFound(t *testing.T) {
-	recorder := httptest.NewRecorder()
+		assert.Equal(t, errors.InvalidCardsCountErrorCode, response.Code)
+		assert.Equal(t, "the cards count is invalid", response.Message)
+	})
 
-	context := testhelpers.GetTestGinContext(recorder)
+	t.Run("deck id supplied in request not found should return an error response", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
 
-	deckId := "acee26ae-c304-4747-ab47-0109c6130a10"
-	params := []gin.Param{
-		{
-			Key:   "id",
-			Value: deckId,
-		},
-	}
+		context := testhelpers.GetTestGinContext(recorder)
 
-	cardCount := 5
-	queryParams := url.Values{}
-	queryParams.Add("count", strconv.Itoa(cardCount))
-	testhelpers.MockJsonGet(context, params, queryParams)
+		deckId := "acee26ae-c304-4747-ab47-0109c6130a10"
+		params := []gin.Param{
+			{
+				Key:   "id",
+				Value: deckId,
+			},
+		}
 
-	handler := handlers.NewDrawCardsHandler(service.CreateDeckService())
+		cardCount := 5
+		queryParams := url.Values{}
+		queryParams.Add("count", strconv.Itoa(cardCount))
+		testhelpers.MockJsonGet(context, params, queryParams)
 
-	handler.DrawCards(context)
+		handler := handlers.NewDrawCardsHandler(service.CreateDeckService())
 
-	assert.Equal(t, http.StatusBadRequest, recorder.Code)
+		handler.DrawCards(context)
 
-	var response httpHelpers.ErrorResponse
-	err := json.Unmarshal([]byte(recorder.Body.String()), &response)
-	if err != nil {
-		t.Error(err)
-	}
+		assert.Equal(t, http.StatusBadRequest, recorder.Code)
 
-	assert.Equal(t, errors.DeckNotFoundErrorCode, response.Code)
-	assert.Equal(t, "the requested deck was not found", response.Message)
+		var response httpHelpers.ErrorResponse
+		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
+		if err != nil {
+			t.Error(err)
+		}
+
+		assert.Equal(t, errors.DeckNotFoundErrorCode, response.Code)
+		assert.Equal(t, "the requested deck was not found", response.Message)
+	})
 }

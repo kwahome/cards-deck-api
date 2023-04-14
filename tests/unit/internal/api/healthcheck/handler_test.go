@@ -15,24 +15,26 @@ import (
 
 func TestHealthCheckPing(t *testing.T) {
 
-	recorder := httptest.NewRecorder()
+	t.Run("should return live-ness status", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
 
-	context := testhelpers.GetTestGinContext(recorder)
+		context := testhelpers.GetTestGinContext(recorder)
 
-	testhelpers.MockJsonGet(context, []gin.Param{}, url.Values{})
+		testhelpers.MockJsonGet(context, []gin.Param{}, url.Values{})
 
-	handler := healthcheck.CheckStatusHandler{}
+		handler := healthcheck.CheckStatusHandler{}
 
-	handler.Ping(context)
+		handler.Ping(context)
 
-	assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.Equal(t, http.StatusOK, recorder.Code)
 
-	statusResponse := healthcheck.StatusResponse{}
-	err := json.Unmarshal([]byte(recorder.Body.String()), &statusResponse)
-	if err != nil {
-		t.Error(err)
-	}
+		statusResponse := healthcheck.StatusResponse{}
+		err := json.Unmarshal([]byte(recorder.Body.String()), &statusResponse)
+		if err != nil {
+			t.Error(err)
+		}
 
-	assert.Equal(t, "alive", statusResponse.Status)
+		assert.Equal(t, "alive", statusResponse.Status)
+	})
 
 }
