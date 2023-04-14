@@ -1,17 +1,12 @@
 package config
 
-// HTTP represents configuration properties required for starting http server.
-type HTTP struct {
-	Host                      string
-	Port                      string
-	ReadTimeoutSeconds        int
-	WriteTimeoutSeconds       int
-	DefaultHttpRequestTimeout int
-	Debug                     bool
-}
-
-// Config represents all the application configurations grouped as per their category.
+// Config represents all the application configurations
 type Config struct {
-	HTTP      HTTP
-	AuthToken string
+	Host                      string `mapstructure:"APP_HOST"`
+	Port                      string `mapstructure:"APP_PORT"`
+	ReadTimeoutSeconds        int    `mapstructure:"READ_TIMEOUT"`
+	WriteTimeoutSeconds       int    `mapstructure:"WRITE_TIMEOUT"`
+	DefaultHttpRequestTimeout int    `mapstructure:"DEFAULT_HTTP_REQUEST_TIMEOUT"`
+	Debug                     bool   `mapstructure:"DEBUG"`
+	AuthToken                 string `mapstructure:"AUTH_TOKEN"`
 }
