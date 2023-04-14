@@ -48,7 +48,7 @@ func TestCreateDeckApi(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, endpoint, nil)
 
 		router.ServeHTTP(response, request)
-		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Equal(t, http.StatusCreated, response.Code)
 
 		expectedResponse := fmt.Sprintf(`{"deck_id":"%s", "remaining":52, "shuffled":false}`, deckId)
 		assert.JSONEq(t, expectedResponse, response.Body.String())
@@ -79,7 +79,7 @@ func TestCreateDeckApi(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("%s?shuffle=%v", endpoint, true), nil)
 
 		router.ServeHTTP(response, request)
-		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Equal(t, http.StatusCreated, response.Code)
 
 		expectedResponse := fmt.Sprintf(`{"deck_id":"%s", "remaining":52, "shuffled":true}`, deckId)
 		assert.JSONEq(t, expectedResponse, response.Body.String())
@@ -115,7 +115,7 @@ func TestCreateDeckApi(t *testing.T) {
 			nil)
 
 		router.ServeHTTP(response, request)
-		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Equal(t, http.StatusCreated, response.Code)
 
 		expectedResponse := fmt.Sprintf(`{"deck_id":"%s", "remaining":2, "shuffled":true}`, deckId)
 		assert.JSONEq(t, expectedResponse, response.Body.String())

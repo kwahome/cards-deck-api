@@ -28,7 +28,7 @@ func TestCreateDeck(t *testing.T) {
 
 		handler.CreateDeck(context)
 
-		assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.Equal(t, http.StatusCreated, recorder.Code)
 
 		response := dtos.DeckResponse{}
 		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
@@ -54,7 +54,7 @@ func TestCreateDeck(t *testing.T) {
 
 		handler.CreateDeck(context)
 
-		assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.Equal(t, http.StatusCreated, recorder.Code)
 
 		response := dtos.DeckResponse{}
 		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
@@ -80,7 +80,7 @@ func TestCreateDeck(t *testing.T) {
 
 		handler.CreateDeck(context)
 
-		assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.Equal(t, http.StatusCreated, recorder.Code)
 
 		response := dtos.DeckResponse{}
 		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
@@ -107,7 +107,7 @@ func TestCreateDeck(t *testing.T) {
 
 		handler.CreateDeck(context)
 
-		assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.Equal(t, http.StatusCreated, recorder.Code)
 
 		response := dtos.DeckResponse{}
 		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
