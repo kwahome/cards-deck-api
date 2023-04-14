@@ -13,35 +13,11 @@ import (
 
 func GenerateCardsResponse(cards model.Cards) []dtos.CardResponse {
 
-	cardSymbolNameMap := map[string]string{
-		"A":  "Ace",
-		"1":  "1",
-		"2":  "2",
-		"3":  "3",
-		"4":  "4",
-		"5":  "5",
-		"6":  "6",
-		"7":  "7",
-		"8":  "8",
-		"9":  "9",
-		"10": "10",
-		"J":  "Jack",
-		"Q":  "Queen",
-		"K":  "King",
-	}
-
-	cardSuiteMap := map[string]string{
-		"H": "Heart",
-		"D": "Diamond",
-		"C": "Club",
-		"S": "Spade",
-	}
-
 	var cardsResponse []dtos.CardResponse
 	for _, card := range cards {
 		cardsResponse = append(cardsResponse, dtos.CardResponse{
-			Value: cardSymbolNameMap[card[:len(card)-1]],
-			Suite: cardSuiteMap[card[len(card)-1:]],
+			Value: model.CardSymbolNameMap[card[:len(card)-1]],
+			Suite: model.CardSuitMap[card[len(card)-1:]],
 			Code:  card,
 		})
 	}

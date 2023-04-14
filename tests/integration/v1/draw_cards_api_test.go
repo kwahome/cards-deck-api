@@ -45,8 +45,8 @@ func TestDrawCardsApi(t *testing.T) {
 		router.ServeHTTP(response, request)
 		assert.Equal(t, http.StatusOK, response.Code)
 
-		expectedResponse := `[{"code":"AC", "suite":"Club", "value":"Ace"}, {"code":"2C", "suite":"Club", "value":"2"}]`
-		assert.JSONEq(t, expectedResponse, response.Body.String())
+		expected := `[{"code":"AC", "suite":"CLUBS", "value":"ACE"}, {"code":"2C", "suite":"CLUBS", "value":"2"}]`
+		assert.JSONEq(t, expected, response.Body.String())
 	})
 
 	t.Run("should return bad request when deck id is invalid or could not be found", func(t *testing.T) {
