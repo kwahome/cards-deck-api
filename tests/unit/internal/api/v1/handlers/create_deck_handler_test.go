@@ -15,82 +15,108 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateDeck_Succeeds(t *testing.T) {
+func TestCreateDeck(t *testing.T) {
 
-	recorder := httptest.NewRecorder()
+	t.Run("valid request should succeed", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
 
-	context := testhelpers.GetTestGinContext(recorder)
+		context := testhelpers.GetTestGinContext(recorder)
 
-	testhelpers.MockJsonGet(context, []gin.Param{}, url.Values{})
+		testhelpers.MockJsonGet(context, []gin.Param{}, url.Values{})
 
-	handler := handlers.NewCreateDeckHandler(service.CreateDeckService())
+		handler := handlers.NewCreateDeckHandler(service.CreateDeckService())
 
-	handler.CreateDeck(context)
+		handler.CreateDeck(context)
 
-	assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.Equal(t, http.StatusOK, recorder.Code)
 
-	response := dtos.DeckResponse{}
-	err := json.Unmarshal([]byte(recorder.Body.String()), &response)
-	if err != nil {
-		t.Error(err)
-	}
+		response := dtos.DeckResponse{}
+		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
+		if err != nil {
+			t.Error(err)
+		}
 
-	assert.True(t, testhelpers.IsValidUUID(response.DeckID))
-	assert.False(t, response.Shuffled)
-	assert.Equal(t, 52, response.Remaining)
+		assert.True(t, testhelpers.IsValidUUID(response.DeckID))
+		assert.False(t, response.Shuffled)
+		assert.Equal(t, 52, response.Remaining)
+	})
 
-}
+	t.Run("valid request with shuffle query param should succeed", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
 
-func TestCreateDeck_WithShuffleQueryParam_Succeeds(t *testing.T) {
+		context := testhelpers.GetTestGinContext(recorder)
 
-	recorder := httptest.NewRecorder()
+		queryParams := url.Values{}
+		queryParams.Add("shuffle", "true")
+		testhelpers.MockJsonGet(context, []gin.Param{}, queryParams)
 
-	context := testhelpers.GetTestGinContext(recorder)
+		handler := handlers.NewCreateDeckHandler(service.CreateDeckService())
 
-	queryParams := url.Values{}
-	queryParams.Add("shuffle", "true")
-	testhelpers.MockJsonGet(context, []gin.Param{}, queryParams)
+		handler.CreateDeck(context)
 
-	handler := handlers.NewCreateDeckHandler(service.CreateDeckService())
+		assert.Equal(t, http.StatusOK, recorder.Code)
 
-	handler.CreateDeck(context)
+		response := dtos.DeckResponse{}
+		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
+		if err != nil {
+			t.Error(err)
+		}
 
-	assert.Equal(t, http.StatusOK, recorder.Code)
+		assert.True(t, testhelpers.IsValidUUID(response.DeckID))
+		assert.True(t, response.Shuffled)
+		assert.Equal(t, 52, response.Remaining)
+	})
 
-	response := dtos.DeckResponse{}
-	err := json.Unmarshal([]byte(recorder.Body.String()), &response)
-	if err != nil {
-		t.Error(err)
-	}
+	t.Run("valid request with cards query param should succeed", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
 
-	assert.True(t, testhelpers.IsValidUUID(response.DeckID))
-	assert.True(t, response.Shuffled)
-	assert.Equal(t, 52, response.Remaining)
-}
+		context := testhelpers.GetTestGinContext(recorder)
 
-func TestCreateDeck_WithCardsQueryParam_Succeeds(t *testing.T) {
+		queryParams := url.Values{}
+		queryParams.Add("cards", "AS,KD,AC,2C,KH")
+		testhelpers.MockJsonGet(context, []gin.Param{}, queryParams)
 
-	recorder := httptest.NewRecorder()
+		handler := handlers.NewCreateDeckHandler(service.CreateDeckService())
 
-	context := testhelpers.GetTestGinContext(recorder)
+		handler.CreateDeck(context)
 
-	queryParams := url.Values{}
-	queryParams.Add("cards", "AS,KD,AC,2C,KH")
-	testhelpers.MockJsonGet(context, []gin.Param{}, queryParams)
+		assert.Equal(t, http.StatusOK, recorder.Code)
 
-	handler := handlers.NewCreateDeckHandler(service.CreateDeckService())
+		response := dtos.DeckResponse{}
+		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
+		if err != nil {
+			t.Error(err)
+		}
 
-	handler.CreateDeck(context)
+		assert.True(t, testhelpers.IsValidUUID(response.DeckID))
+		assert.False(t, response.Shuffled)
+		assert.Equal(t, 5, response.Remaining)
+	})
 
-	assert.Equal(t, http.StatusOK, recorder.Code)
+	t.Run("valid request with shuffle and cards query params should succeed", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
 
-	response := dtos.DeckResponse{}
-	err := json.Unmarshal([]byte(recorder.Body.String()), &response)
-	if err != nil {
-		t.Error(err)
-	}
+		context := testhelpers.GetTestGinContext(recorder)
 
-	assert.True(t, testhelpers.IsValidUUID(response.DeckID))
-	assert.False(t, response.Shuffled)
-	assert.Equal(t, 5, response.Remaining)
+		queryParams := url.Values{}
+		queryParams.Add("shuffle", "true")
+		queryParams.Add("cards", "AS,KD,AC,2C,KH")
+		testhelpers.MockJsonGet(context, []gin.Param{}, queryParams)
+
+		handler := handlers.NewCreateDeckHandler(service.CreateDeckService())
+
+		handler.CreateDeck(context)
+
+		assert.Equal(t, http.StatusOK, recorder.Code)
+
+		response := dtos.DeckResponse{}
+		err := json.Unmarshal([]byte(recorder.Body.String()), &response)
+		if err != nil {
+			t.Error(err)
+		}
+
+		assert.True(t, testhelpers.IsValidUUID(response.DeckID))
+		assert.True(t, response.Shuffled)
+		assert.Equal(t, 5, response.Remaining)
+	})
 }
