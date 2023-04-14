@@ -108,82 +108,141 @@ cards-deck-api-app-1  | time="2023-04-13T22:09:06Z" level=info msg="HTTP server 
 
 ### 4. Interacting with the APIs
 
-- Health Check:
+**a) Health Check:**
 
-    ```
-    curl --location --request GET 'localhost:8080/health'
-  
-    {
-        "status": "alive",
-        "timestamp": "Thursday, 13-Apr-23 23:22:58 EAT"
-    }
-    ```
+`GET /health`
+
+example:
+
+```
+curl --location --request GET 'localhost:8080/health'
+
+{
+    "status": "alive",
+    "timestamp": "Thursday, 13-Apr-23 23:22:58 EAT"
+}
+```
         
+**b) Create Deck:**
 
-- Create Deck:
+`POST /api/v1/decks`
 
-    ```
-    curl --location --request POST 'localhost:8080/api/v1/decks?shuffle=true&cards=AC%2CKH%2C2S' --header 'AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c'
+headers:
 
-    {
-        "deck_id": "60e87195-25b2-44eb-9d67-3004ad664e5c",
-        "shuffled": true,
-        "remaining": 3
-    }
-    ```
+| Name      | Type | Required | Description
+|-----------| --- |----------| --- |
+| AuthToken | string | yes      | The auth token for the request. The value to use for testing is `ab38bf18-6f87-41a7-9aed-c1eb0db64b9c`
 
-- Open Deck:
-    
-    ```
-    curl --location 'localhost:8080/api/v1/decks/60e87195-25b2-44eb-9d67-3004ad664e5c' --header 'AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c'
 
-    {
-        "deck_id": "60e87195-25b2-44eb-9d67-3004ad664e5c",
-        "shuffled": true,
-        "remaining": 3,
-        "cards": [
-            {
-                "value": "King",
-                "suite": "Heart",
-                "code": "KH"
-            },
-            {
-                "value": "Ace",
-                "suite": "Club",
-                "code": "AC"
-            },
-            {
-                "value": "2",
-                "suite": "Spade",
-                "code": "2S"
-            }
-        ]
-    }
-    ```
+query params:
 
-- Draw Cards:
+| Name | Type    | Required | Description
+| --- |---------|----------| --- |
+| shuffle | boolean | no       | takes values `true` or `false`. If `true`, the cards from the deck will be shuffled otherwise the deck is not shuffled upon creation.
+| cards | string  | no       | comma-separated string of card codes (e.g. `AS,KD,AC,2C,KH`). If provided, the created deck will only include specified cards otherwise a full deck of 52 cards will be created. 
 
-    ```
-    curl --location 'localhost:8080/api/v1/decks/60e87195-25b2-44eb-9d67-3004ad664e5c/draw?count=3' --header 'AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c'
+example:
 
-    [
+```
+curl --location --request POST 'localhost:8080/api/v1/decks?shuffle=true&cards=AC%2CKH%2C2S' --header 'AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c'
+
+{
+    "deck_id": "60e87195-25b2-44eb-9d67-3004ad664e5c",
+    "shuffled": true,
+    "remaining": 3
+}
+```
+
+**c) Open Deck:**
+
+`GET /api/v1/decks/:id`
+
+headers:
+
+| Name      | Type | Required | Description
+|-----------| --- |----------| --- |
+| AuthToken | string | yes      | The auth token for the request. The value to use for testing is `ab38bf18-6f87-41a7-9aed-c1eb0db64b9c`
+
+path params:
+
+| Name | Type | Required | Description
+| --- | --- |----------| --- |
+| id | uuid (string) | yes      | The uuid identifying the deck to be opened.
+
+example:
+
+```
+curl --location 'localhost:8080/api/v1/decks/60e87195-25b2-44eb-9d67-3004ad664e5c' --header 'AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c'
+
+{
+    "deck_id": "60e87195-25b2-44eb-9d67-3004ad664e5c",
+    "shuffled": true,
+    "remaining": 3,
+    "cards": [
         {
-            "value": "King",
-            "suite": "Heart",
+            "value": "KING",
+            "suite": "HEARTS",
             "code": "KH"
         },
         {
-            "value": "Ace",
-            "suite": "Club",
+            "value": "ACE",
+            "suite": "CLUBS",
             "code": "AC"
         },
         {
             "value": "2",
-            "suite": "Spade",
+            "suite": "SPADES",
             "code": "2S"
         }
     ]
-    ```
+}
+```
+
+**d) Draw Cards:**
+
+`GET /api/v1/decks/:id/draw`
+
+headers:
+
+| Name      | Type | Required | Description
+|-----------| --- |----------| --- |
+| AuthToken | string | yes      | The auth token for the request. The value to use for testing is `ab38bf18-6f87-41a7-9aed-c1eb0db64b9c`
+
+path params:
+
+| Name | Type | Required | Description
+| --- | --- |----------| --- |
+| id | uuid (string) | yes      | The uuid identifying the deck from which cards will be drawn.
+
+query params:
+
+| Name | Type | Required | Description
+| --- | --- |----------| --- |
+| count | int | yes      | The number of cards to draw from the deck. The count of drawn cards should be less than or equal to the remaining deck size.
+
+example:
+
+```
+curl --location 'localhost:8080/api/v1/decks/60e87195-25b2-44eb-9d67-3004ad664e5c/draw?count=3' --header 'AuthToken: ab38bf18-6f87-41a7-9aed-c1eb0db64b9c'
+
+[
+    {
+        "value": "KING",
+        "suite": "HEARTS",
+        "code": "KH"
+    },
+    {
+        "value": "ACE",
+        "suite": "CLUBS",
+        "code": "AC"
+    },
+    {
+        "value": "2",
+        "suite": "SPADES",
+        "code": "2S"
+    }
+]
+```
 
 ## Code Structure
 The backend service is implemented using clean architecture principles. 

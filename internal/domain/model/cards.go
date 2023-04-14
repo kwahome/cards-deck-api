@@ -7,6 +7,37 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+var CardSymbolNameMap = map[string]string{
+	"A":  "ACE",
+	"1":  "1",
+	"2":  "2",
+	"3":  "3",
+	"4":  "4",
+	"5":  "5",
+	"6":  "6",
+	"7":  "7",
+	"8":  "8",
+	"9":  "9",
+	"10": "10",
+	"J":  "JACK",
+	"Q":  "QUEEN",
+	"K":  "KING",
+}
+
+var CardSuitMap = map[string]string{
+	"C": "CLUBS",
+	"D": "DIAMONDS",
+	"H": "HEARTS",
+	"S": "SPADES",
+}
+
+var CardSuitSymbolMap = map[string]string{
+	"C": "♣",
+	"D": "♦",
+	"H": "♥",
+	"S": "♠",
+}
+
 type Cards []string
 
 func (cards Cards) Shuffle() {

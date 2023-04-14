@@ -51,9 +51,9 @@ func TestOpenDeckApi(t *testing.T) {
 		assert.Equal(t, http.StatusOK, response.Code)
 
 		expectedResponse := fmt.Sprintf(
-			`{"deck_id":"%s", "remaining":2, "shuffled":false,
-			"cards":[{"code":"AC", "suite":"Club", "value":"Ace"}, 
-			{"code":"2C", "suite":"Club", "value":"2"}]}`,
+			`{"deck_id":"%s", "remaining":2, "shuffled":false, 
+			"cards":[{"code":"AC", "suite":"CLUBS", "value":"ACE"}, 
+			{"code":"2C", "suite":"CLUBS", "value":"2"}]}`,
 			deckId)
 
 		assert.JSONEq(t, expectedResponse, response.Body.String())
